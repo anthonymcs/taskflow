@@ -21,81 +21,87 @@ class TaskFlowApp extends StatelessWidget {
   }
 }
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  final String studentName = 'Anthony Macias';
+  static const dailyGoal = 5;
+  int completedTasks = 0;
+  int pendingTasks = 3;
+
+  void _completeTask() {
+    if (pendingTasks == 0) {
+      return;
+    }
+    setState(() {
+      pendingTasks--;
+      if (completedTasks < dailyGoal) {
+        completedTasks++;
+      }
+    });
+  }
+
+  void _addTask() {
+    setState(() {
+      pendingTasks++;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Variables locales solicitadas en la práctica y en el Reto Autónomo
-    const studentName = 'Anthony Macias';
-    const pendingTasks = 5;
-    const courseName = 'Desarrollo de aplicaciones móviles';
-    const motivationalMessage = '¡Organiza tu día y alcanza tus metas paso a paso!';
+    final statusMessage = pendingTasks == 0
+        ? '¡Excelente! No tienes tareas pendientes.'
+        : 'Aún tienes tareas por organizar.';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TaskFlow'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('TaskFlow'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icono personalizado para representar la app TaskFlow (Reto Autónomo)
-            const Icon(
-              Icons.task_alt_rounded,
-              size: 64,
-              color: Colors.indigo,
-            ),
-            const SizedBox(height: 24),
             Text(
               '¡Hola, $studentName!',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            // Mensaje motivacional personalizado debajo del saludo (Reto Autónomo)
-            Text(
-              motivationalMessage,
-              style: TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-                color: Colors.grey.shade700,
-              ),
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 12),
-            Text(
-              'Bienvenido/a a $courseName.',
-              style: const TextStyle(fontSize: 15),
-            ),
-            const SizedBox(height: 32),
+            Text(statusMessage),
+            const SizedBox(height: 8),
+            Text('Completadas hoy: $completedTasks de $dailyGoal'),
+            const SizedBox(height: 28),
             Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.pending_actions_rounded,
-                      color: Colors.indigo,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 14),
-                    Text(
-                      'Tareas pendientes: $pendingTasks',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    const Icon(Icons.pending_actions),
+                    const SizedBox(width: 12),
+                    Text('Tareas pendientes: $pendingTasks'),
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 24),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _addTask,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Agregar tarea'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: pendingTasks == 0 ? null : _completeTask,
+                  icon: const Icon(Icons.done),
+                  label: const Text('Completar una tarea'),
+                ),
+              ],
             ),
           ],
         ),
