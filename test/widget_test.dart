@@ -11,7 +11,7 @@ void main() {
 
     await tester.pumpWidget(
       ChangeNotifierProvider<TasksViewModel>(
-        create: (_) => TasksViewModel(repository),
+        create: (_) => TasksViewModel(repository)..loadTasks(),
         child: const TaskFlowApp(),
       ),
     );

@@ -58,3 +58,18 @@ Task: id (entero único), title (texto), description (texto), priority (Alta, Me
 - DELETE /tasks/:id: eliminar tarea
 
 La API concreta se elegirá después. Estas rutas son requisitos, no direcciones de un servidor ya conectado.
+
+## API de tareas
+
+- **URL base:** `https://jsonplaceholder.typicode.com`
+- **Endpoint consultado:** `GET /todos`
+- **Parámetro de filtro:** `userId=1` (consulta las tareas asignadas al usuario 1 para delimitar los resultados de prueba).
+- **Campos recibidos de la API:**
+  - `userId` (int): Identificador del usuario.
+  - `id` (int): Identificador único de la tarea.
+  - `title` (String): Título o descripción corta de la tarea.
+  - `completed` (bool): Estado de finalización remoto (mapeado a `isCompleted`).
+- **Valores completados por defecto en TaskFlow:**
+  - `description`: `'Sin descripción (API)'` (la API externa no incluye campo de descripción detallada).
+  - `priority`: `'Sin prioridad (API)'` (la API externa no incluye clasificación de prioridad).
+- **Comportamiento de persistencia:** El cambio de estado mediante el botón de la interfaz es local y temporal en memoria; al reiniciar la aplicación los datos se vuelven a solicitar a la API remota.
