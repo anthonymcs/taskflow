@@ -73,3 +73,21 @@ La API concreta se elegirá después. Estas rutas son requisitos, no direcciones
   - `description`: `'Sin descripción (API)'` (la API externa no incluye campo de descripción detallada).
   - `priority`: `'Sin prioridad (API)'` (la API externa no incluye clasificación de prioridad).
 - **Comportamiento de persistencia:** El cambio de estado mediante el botón de la interfaz es local y temporal en memoria; al reiniciar la aplicación los datos se vuelven a solicitar a la API remota.
+
+## Estados asíncronos en TaskFlow
+
+La aplicación maneja cuatro estados asíncronos bien diferenciados para la consulta remota:
+
+1. **Carga (`isLoading = true`)**:
+   - Mientras la petición HTTP hacia `/todos` está en curso, se muestra un indicador visual central (`CircularProgressIndicator`) y se bloquea el botón de recargar en el AppBar para evitar peticiones redundantes.
+   - *Cómo provocarlo:* Se produce automáticamente al iniciar la app o al pulsar el botón de actualizar con una conexión lenta o simulada.
+2. **Éxito (tareas disponibles)**:
+   - Al completarse la petición con código HTTP 200 y una lista con datos, se renderizan las tarjetas correspondientes con su título, prioridad y estado.
+   - *Cómo provocarlo:* Iniciar la aplicación con conectividad normal a internet y `userId = 1`.
+3. **Vacío (`isEmpty = true`)**:
+   - La petición responde exitosamente (HTTP 200), pero la lista devuelta no contiene tareas (`_tasks.isEmpty`). Se muestra el mensaje *"Todavía no hay tareas para mostrar."* y un botón *"Actualizar"*.
+   - *Cómo provocarlo:* Configurar temporalmente `userId = 9999` (o un usuario sin tareas) en `TaskApiService`.
+4. **Error (`errorMessage != null`)**:
+   - Ocurre cuando la petición falla por falta de internet, timeout o error de servidor. Se limpia la lista anterior, se presenta el mensaje *"No se pudieron cargar las tareas."* y el botón *"Reintentar"*.
+   - *Cómo provocarlo:* Desactivar la conexión a internet en el dispositivo o emulador y presionar actualizar.
+   - *Recuperación:* Al reanudar la conexión y pulsar *"Reintentar"*, el ViewModel ejecuta nuevamente `loadTasks()` y recupera las tareas sin reiniciar la aplicación.
